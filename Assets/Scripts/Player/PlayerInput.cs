@@ -1,9 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
-// [RequireComponent(typeof(BMovement))]
 public class PlayerInput : BInput
 {
     private BMovement movement;
@@ -14,8 +13,12 @@ public class PlayerInput : BInput
         movement = GetComponent<BMovement>();
     }
 
-    public override void Input(KeyCode key)
+    void OnMove(InputValue value)
     {
-        if (movement != null) movement.Move(Vector3.up);
+        if (movement == null) return;
+
+        Vector2 direction = value.Get<Vector2>();
+
+        movement.Move(new Vector3(direction.x, 0, direction.y));
     }
 }
