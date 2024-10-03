@@ -16,6 +16,6 @@ public class PlayerInput : BInput
 
     public override void Input(KeyCode key)
     {
-        movement.Move(Vector3.up);
+        if (movement != null) movement.Move(Vector3.up);
     }
 }
