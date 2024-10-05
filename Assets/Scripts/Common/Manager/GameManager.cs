@@ -14,4 +14,19 @@ public class GameManager : Singleton<GameManager>
     {
         OnUpdate += handler;
     }
+
+    public void RemoveUpdateListener(EventHandler handler)
+    {
+        OnUpdate -= handler;
+    }
+
+    public void GameOver()
+    {
+        Debug.Log("Game Over");
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
 }

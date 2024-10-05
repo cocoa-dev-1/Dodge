@@ -9,43 +9,73 @@ public class Pool
     [SerializeField] private string name;
     public string Name => name;
     [SerializeField] private int initialSize = 10;
-    [SerializeField] private Component prefab;
-    public Component Prefab => prefab;
+    [SerializeField] private GameObject prefab;
+    public GameObject Prefab => prefab;
     [SerializeField] private Transform parent = null;
 
-    private readonly Stack<Component> pools = new();
+    private readonly Stack<GameObject> pools = new();
 
     public void Initialize()
     {
         for (int i = 0; i < initialSize; i++)
         {
-            Component obj = Object.Instantiate(prefab, parent);
-            obj.gameObject.SetActive(false);
+            var obj = CreateNewObject();
+            obj.SetActive(false);
             pools.Push(obj);
         }
     }
 
-    public T GetOne<T>() where T : Component, IPoolable
+    public GameObject GetOne()
     {
-        if (pools.Count == 0)
-        {
-            Component obj = Object.Instantiate(prefab, parent);
-            return obj as T;
-        }
+        GameObject obj = GetObjectFromPool();
+        obj.SetActive(true);
 
-        Component pooledObject = pools.Pop();
-        pooledObject.gameObject.SetActive(true);
-
-        return pooledObject as T;
+        return obj;
     }
 
-    public void Return<T>(T obj) where T : Component, IPoolable
+    public T GetOne<T>() where T : Component
     {
-        obj.gameObject.SetActive(false);
+        GameObject obj = GetObjectFromPool();
+        obj.SetActive(true);
+
+        if (obj.TryGetComponent(out T component))
+        {
+            return component;
+        }
+        else
+        {
+            obj.SetActive(false);
+            throw new System.Exception("Component not found");
+        }
+    }
+
+    public void Return(GameObject obj)
+    {
+        obj.SetActive(false);
         pools.Push(obj);
     }
 
-    public static Pool Create(Component prefab)
+    private GameObject GetObjectFromPool()
+    {
+        if (pools.Count == 0)
+        {
+            return CreateNewObject();
+        }
+
+        return pools.Pop();
+    }
+
+    private GameObject CreateNewObject()
+    {
+        if (parent == null)
+        {
+            return Object.Instantiate(prefab);
+        }
+
+        return Object.Instantiate(prefab, parent);
+    }
+
+    public static Pool Create(GameObject prefab)
     {
         Pool pool = new()
         {

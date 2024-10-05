@@ -1,16 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovement : BMovement
+public class BulletMovement : BMovement
 {
-    private float speed;
+    [SerializeField] private BulletData bulletData;
+
     private Vector3 direction = Vector3.zero;
 
-    public void Start()
+    private void OnEnable()
     {
-        speed = PlayerManager.Instance.Speed;
         GameManager.Instance.AddUpdateListener(OnUpdate);
+    }
+
+    private void OnDisable()
+    {
+        GameManager.Instance.RemoveUpdateListener(OnUpdate);
     }
 
     public override void Move(Vector3 direction)
@@ -21,8 +24,6 @@ public class PlayerMovement : BMovement
     private void OnUpdate(object sender, System.EventArgs e)
     {
         if (direction == Vector3.zero) return;
-        transform.position += speed * Time.deltaTime * direction.normalized;
-
-        PlayerManager.Instance.UpdatePlayerPosition(transform.position);
+        transform.position += bulletData.Speed * Time.deltaTime * direction.normalized;
     }
 }

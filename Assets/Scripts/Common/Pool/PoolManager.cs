@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class PoolManager : Singleton<PoolManager>
 {
-    [SerializeField] private Pool[] pools;
+    [SerializeField]
+    private Pool[] pools;
 
     private void Start()
     {
@@ -12,41 +13,43 @@ public class PoolManager : Singleton<PoolManager>
         }
     }
 
-    public T GetOne<T>() where T : Component, IPoolable
+    public GameObject GetOne(string name)
     {
         foreach (Pool pool in pools)
         {
-            if (pool.Prefab.GetType() == typeof(T))
+            if (pool.Name == name)
+            {
+                return pool.GetOne();
+            }
+        }
+
+        throw new System.Exception("Pool not found");
+    }
+
+    public T GetOne<T>(string name) where T : Component
+    {
+        foreach (Pool pool in pools)
+        {
+            if (pool.Name == name)
             {
                 return pool.GetOne<T>();
             }
         }
 
-        return null;
+        throw new System.Exception("Pool not found");
     }
 
-    public T GetOne<T>(string name) where T : Component, IPoolable
+    public void Return(string name, GameObject obj)
     {
         foreach (Pool pool in pools)
         {
-            if (pool.Name == name && pool.Prefab.GetType() == typeof(T))
-            {
-                return pool.GetOne<T>();
-            }
-        }
-
-        return null;
-    }
-
-    public void Return<T>(T obj) where T : Component, IPoolable
-    {
-        foreach (Pool pool in pools)
-        {
-            if (pool.Prefab.GetType() == typeof(T))
+            if (pool.Name == name)
             {
                 pool.Return(obj);
                 return;
             }
         }
+
+        throw new System.Exception("Pool not found");
     }
 }
