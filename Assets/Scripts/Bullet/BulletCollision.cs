@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class BulletCollision : MonoBehaviour
 {
+    [SerializeField] private BulletData bulletData;
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Bullet"))
@@ -14,9 +16,9 @@ public class BulletCollision : MonoBehaviour
             return;
         }
 
-        if (other.gameObject.TryGetComponent(out BInteraction interaction))
+        if (other.gameObject.TryGetComponent(out BDamageable damageable))
         {
-            interaction.Interact(gameObject);
+            damageable.TakeDamage(bulletData.Damage);
         }
 
         PoolManager.Instance.Return("Bullet", gameObject);

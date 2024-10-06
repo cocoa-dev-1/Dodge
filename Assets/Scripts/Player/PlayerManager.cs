@@ -26,6 +26,16 @@ public class PlayerManager : Singleton<PlayerManager>
         this.position = position;
     }
 
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+
+        if (health <= 0)
+        {
+            Dead();
+        }
+    }
+
     public void Dead()
     {
         isDead = true;
