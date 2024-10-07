@@ -14,7 +14,9 @@ public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
                 if (instance == null)
                 {
                     string name = typeof(T).ToString();
-                    throw new System.Exception($"Singleton {name} instance not found.");
+                    // throw new System.Exception($"Singleton {name} instance not found.");
+                    Debug.LogError($"Singleton {name} instance not found.");
+                    return null;
                 }
 
                 DontDestroyOnLoad(instance.gameObject);
