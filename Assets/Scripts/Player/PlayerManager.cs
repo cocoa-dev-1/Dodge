@@ -44,6 +44,7 @@ public class PlayerManager : Singleton<PlayerManager>
 
     private void Reset()
     {
+        position = Vector3.zero;
         health = playerData.Health;
         speed = playerData.Speed;
     }
